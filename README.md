@@ -1,4 +1,4 @@
-# K3s Cluster with docker-compose
+# Kubernetes Cluster with docker-compose
 
 you can run a local kubernetes cluster with a master and 4 nodes
 
