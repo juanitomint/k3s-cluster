@@ -44,6 +44,14 @@ Warning: Tiller is already installed in the cluster.
 (Use --client-only to suppress this message, or --upgrade to upgrade Tiller to the current version.)
 Happy Helming!
 ```
+
+## if you want persistent storage in your nodes
+
+ ```
+ ./storage-install.sh
+ ```
+
+
 Then you can start a echo test Application
 
 ```
