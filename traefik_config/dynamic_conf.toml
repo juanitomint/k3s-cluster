@@ -1,0 +1,21 @@
+# http routing section
+[http]
+  [http.routers]
+     # Define a connection between requests and services
+     [http.routers.to-whoami]
+      rule = "Host(`domain`) && PathPrefix(`/whoami/`)"
+      # If the rule matches, applies the middleware
+      middlewares = ["test-user"]
+      # If the rule matches, forward to the whoami service (declared below)
+      service = "whoami"
+
+  [http.middlewares]
+    # Define an authentication mechanism
+    [http.middlewares.test-user.basicAuth]
+      users = ["test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"]
+
+  [http.services]
+    # Define how to reach an existing service on our infrastructure
+    [http.services.whoami.loadBalancer]
+      [[http.services.whoami.loadBalancer.servers]]
+        url = "http://private/whoami-service"

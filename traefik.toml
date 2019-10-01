@@ -1,0 +1,4 @@
+[providers]
+  [providers.file]
+    directory = "/traefik_config"
+    watch = true
