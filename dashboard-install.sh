@@ -1,9 +1,10 @@
 #!/bin/sh
+# --set enableInsecureLogin=true,enableSkipLogin=true,rbac.clusterAdminRole=true,ingress.enabled=true \
 helm install \
---set enableInsecureLogin=true,enableSkipLogin=true,rbac.clusterAdminRole=true,ingress.enabled=true \
 --name kubernetes-dashboard \
 --namespace kubernetes-dashboard \
 --wait --timeout=90 \
+-f dashboard-values.yaml \
 stable/kubernetes-dashboard
 
 POD_NAME=$(kubectl get pods -n kubernetes-dashboard -l "app=kubernetes-dashboard,release=kubernetes-dashboard" -o jsonpath="{.items[0].metadata.name}")
