@@ -26,7 +26,7 @@ services:
     # Can also use K3S_TOKEN from /var/lib/rancher/k3s/server/node-token instead of K3S_CLUSTER_SECRET
     #- K3S_TOKEN=K13849a67fc385fd3c0fa6133a8649d9e717b0258b3b09c87ffc33dae362c12d8c0::node:2e373dca319a0525745fd8b3d8120d9c
     ports:
-    - 8081:80
+    - 80:80
 
   node2:
     image: rancher/k3s
