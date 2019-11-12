@@ -1,83 +1,101 @@
-version: '3'
+version: "3"
 services:
   server:
     image: rancher/k3s:v0.4.0
     # command: server --disable-agent --no-deploy traefik
-    command: server --disable-agent 
+    command: server --disable-agent
     environment:
-    - K3S_CLUSTER_SECRET=somethingtotallyrandom
-    - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
+      - K3S_CLUSTER_SECRET=somethingtotallyrandom
+      - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
     # - K3S_KUBECONFIG_MODE=666
     volumes:
-    - k3s-server:/var/lib/rancher/k3s
-    # This is just so that we get the kubeconfig file out
-    - .:/output
+      - k3s-server:/var/lib/rancher/k3s
+      # This is just so that we get the kubeconfig file out
+      - .:/output
     ports:
-    - 6443:6443
+      - 6443:6443
 
   node1:
     image: rancher/k3s:v0.4.0
     tmpfs:
-    - /run
-    - /var/run
+      - /run
+      - /var/run
     privileged: true
     environment:
-    - K3S_URL=https://server:6443
-    - K3S_CLUSTER_SECRET=somethingtotallyrandom
+      - K3S_URL=https://server:6443
+      - K3S_CLUSTER_SECRET=somethingtotallyrandom
     # Can also use K3S_TOKEN from /var/lib/rancher/k3s/server/node-token instead of K3S_CLUSTER_SECRET
-    #- K3S_TOKEN=K13849a67fc385fd3c0fa6133a8649d9e717b0258b3b09c87ffc33dae362c12d8c0::node:2e373dca319a0525745fd8b3d8120d9c          
+    #- K3S_TOKEN=K13849a67fc385fd3c0fa6133a8649d9e717b0258b3b09c87ffc33dae362c12d8c0::node:2e373dca319a0525745fd8b3d8120d9c
+    expose: 
+     - 80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`localhost`)"
 
   node2:
     image: rancher/k3s
     tmpfs:
-    - /run
-    - /var/run
+      - /run
+      - /var/run
     privileged: true
     environment:
-    - K3S_URL=https://server:6443
-    - K3S_CLUSTER_SECRET=somethingtotallyrandom
+      - K3S_URL=https://server:6443
+      - K3S_CLUSTER_SECRET=somethingtotallyrandom
     # Can also use K3S_TOKEN from /var/lib/rancher/k3s/server/node-token instead of K3S_CLUSTER_SECRET
     #- K3S_TOKEN=K13849a67fc385fd3c0fa6133a8649d9e717b0258b3b09c87ffc33dae362c12d8c0::node:2e373dca319a0525745fd8b3d8120d9c
 
   node3:
     image: rancher/k3s
     tmpfs:
-    - /run
-    - /var/run
+      - /run
+      - /var/run
     privileged: true
     environment:
-    - K3S_URL=https://server:6443
-    - K3S_CLUSTER_SECRET=somethingtotallyrandom
+      - K3S_URL=https://server:6443
+      - K3S_CLUSTER_SECRET=somethingtotallyrandom
 
   node4:
     image: rancher/k3s
     tmpfs:
-    - /run
-    - /var/run
+      - /run
+      - /var/run
     privileged: true
     environment:
-    - K3S_URL=https://server:6443
-    - K3S_CLUSTER_SECRET=somethingtotallyrandom
+      - K3S_URL=https://server:6443
+      - K3S_CLUSTER_SECRET=somethingtotallyrandom
   app:
     image: traefik
-    restart: always
-    command: --api.insecure=true providers.file.filename=dynamic_conf.toml
+    command: --log.level="DEBUG"
     ports:
       - "80:80"
-      - "443:443"
       - "8080:8080"
+      - "443:443"
+    
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.toml:/traefik.toml
+      - ./traefik.toml:/api.toml
       - ./traefik_config:/traefik_config
-      # - ~/data/traefik/acme.json:/acme.json
-   
+  #     # - ~/data/traefik/acme.json:/acme.json
+
+  # app:
+  #     image: traefik
+  #     command: --api.insecure=true --providers.docker #--providers.docker.exposedByDefault=false
+  #     ports:
+  #       - "80:80"
+  #       - "8080:8080"
+  #       - "443:443"
+
+  #     volumes:
+  #       # So that Traefik can listen to the Docker events
+  #       - /var/run/docker.sock:/var/run/docker.sock
   # whoami:
   #   # A container that exposes an API to show its IP address
   #   image: containous/whoami
   #   labels:
   #     - "traefik.enable=true"
-  #     - "traefik.http.routers.whoami.rule=Host(`localhost`)"
+  #     - "traefik.backend=whoami"
+  #     - "traefik.frontend.rule=Path:/whoami"
   #     - "traefik.http.routers.whoami.rule=Host(`localhost`)"
 
 volumes:

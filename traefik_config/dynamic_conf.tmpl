@@ -1,8 +1,7 @@
 # http routing section
 [http]
-  [http.routers]
+  [http.routers.all]
      # Define a connection between requests and services
-     [http.routers.all]
       rule = "Host(`localhost`)"
       # If the rule matches, applies the middleware
       # middlewares = ["test-user"]
@@ -16,16 +15,4 @@
 
   [http.services.ingress]
     # Define how to reach an existing service on our infrastructure
-    [loadBalancer]
-  
-        [[http.services.ingress.loadBalancer.servers]]
-          url = "http://172.18.0.5:31597"
-  
-        [[http.services.ingress.loadBalancer.servers]]
-          url = "http://172.18.0.4:31597"
-  
-        [[http.services.ingress.loadBalancer.servers]]
-          url = "http://172.18.0.6:31597"
-  
-        [[http.services.ingress.loadBalancer.servers]]
-          url = "http://172.18.0.3:31597"
+    [http.services.ingress.loadBalancer]

@@ -1,3 +1,9 @@
+[log]
+  level = "DEBUG"
+[api]
+  insecure = true
+  dashboard = true
+  debug = true
 [providers]
   [providers.file]
     directory = "/traefik_config"
