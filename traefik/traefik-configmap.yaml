@@ -1,0 +1,48 @@
+apiVersion: v1
+data:
+  traefik.toml: |
+    # traefik.toml
+    logLevel = "INFO"
+    defaultEntryPoints = ["http","https"]
+    [api]
+      dashboard = true
+    [entryPoints]
+      [entryPoints.http]
+      address = ":80"
+      compress = true
+      [entryPoints.https]
+      address = ":443"
+      compress = true
+        [entryPoints.https.tls]
+          [[entryPoints.https.tls.certificates]]
+          CertFile = "/ssl/tls.crt"
+          KeyFile = "/ssl/tls.key"
+    [kubernetes]
+    [traefikLog]
+      format = "json"
+kind: ConfigMap
+metadata:
+  labels:
+    app: traefik
+    chart: traefik-1.64.0
+    heritage: Tiller
+    release: traefik
+  name: traefik
+  namespace: kube-system
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /traefik
+        backend:
+          serviceName: traefik-service
+          servicePort: 80     
+---            
