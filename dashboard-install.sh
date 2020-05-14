@@ -1,11 +1,17 @@
 #!/bin/sh
+
+# check helm version
+if [ ! "$(helm version --short|cut -c1-2)" = "v3" ]; then
+echo "Error this script needs Helm v3"
+exit 1
+fi
 # --set enableInsecureLogin=true,enableSkipLogin=true,rbac.clusterAdminRole=true,ingress.enabled=true \
-helm delete --purge kubernetes-dashboard
+kubectl create namespace kubernetes-dashboard 2>/dev/null
 helm install \
---name kubernetes-dashboard \
 --namespace kubernetes-dashboard \
---wait --timeout=90 \
+--wait --timeout=90s \
 -f dashboard-values.yaml \
+kubernetes-dashboard \
 stable/kubernetes-dashboard
 
 # POD_NAME=$(kubectl get pods -n kubernetes-dashboard -l "app=kubernetes-dashboard,release=kubernetes-dashboard" -o jsonpath="{.items[0].metadata.name}")
