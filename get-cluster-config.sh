@@ -5,4 +5,4 @@ if [ "$0" = "$BASH_SOURCE" ]; then
     exit 1
 fi
 echo -e "\nloading profile in KUBECONFIG AS: default"
-export KUBECONFIG=$(pwd)/kubeconfig.yaml 
+export KUBECONFIG=$KUBECONFIG:$(pwd)/kubeconfig.yaml
