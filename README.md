@@ -14,35 +14,48 @@ none!
 
 Start the master and set $KUBECONFIG for you
 ```
-source start-server.sh
-```
-Now you can use *kubectl* as in any other kubernetes cluster
-```
-kubectl cluster-infoKubernetes master is running at https://localhost:6443
-CoreDNS is running at https://localhost:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
-```
-
-now you can start the workers and got set $KUBECONFIG for you
-```
 source start-cluster.sh
 ```
+by default it will spawn 4 nodes
+if you want any other number let say 8
 ```
-kubectl get nodes -o=wide
-NAME           STATUS   ROLES    AGE   VERSION         INTERNAL-IP   EXTERNAL-IP   OS-IMAGE   KERNEL-VERSION     CONTAINER-RUNTIME
-000b0cd4c33c   Ready    <none>   4s    v1.14.1-k3s.4   172.18.0.3    <none>        Unknown    5.0.0-29-generic   containerd://1.2.5+unknown
-5fb8e7e12350   Ready    <none>   3s    v1.14.1-k3s.4   172.18.0.6    <none>        Unknown    5.0.0-29-generic   containerd://1.2.5+unknown
-6104a7e316b9   Ready    <none>   3s    v1.14.1-k3s.4   172.18.0.4    <none>        Unknown    5.0.0-29-generic   containerd://1.2.5+unknown
-b769f581a748   Ready    <none>   4s    v1.14.1-k3s.4   172.18.0.5    <none>        Unknown    5.0.0-29-generic   containerd://1.2.5+unknown
+source start-cluster.sh 8
 ```
-To install [Helm](https://helm.sh/) (the package manager for kubernetes)
+you can use the command above to size up or down the nodes
+
+you'll get something like this at start-up
+
 ```
- ./helm-install.sh 
-serviceaccount/tiller created
-clusterrolebinding.rbac.authorization.k8s.io/tiller created
-$HELM_HOME has been configured at /home/juanb/.helm.
-Warning: Tiller is already installed in the cluster.
-(Use --client-only to suppress this message, or --upgrade to upgrade Tiller to the current version.)
-Happy Helming!
+$ source ./start-cluster.sh 
+SCALE: 4
+starting server....
+Building with native build. Learn about native build in Compose here: https://docs.docker.com/go/compose-native-build/
+Recreating k3s_server_1 ... done
+Recreating k3s_agent_1  ... done
+Recreating k3s_agent_2  ... done
+Recreating k3s_agent_3  ... done
+Recreating k3s_agent_4  ... done
+
+loading profile in KUBECONFIG AS: default
+K3S_TOKEN=86731535528966
+    Name           Command       State                    Ports                  
+---------------------------------------------------------------------------------
+k3s_agent_1    /bin/k3s agent    Up                                              
+k3s_agent_2    /bin/k3s agent    Up                                              
+k3s_agent_3    /bin/k3s agent    Up                                              
+k3s_agent_4    /bin/k3s agent    Up                                              
+k3s_server_1   /bin/k3s server   Up      0.0.0.0:6443->6443/tcp,:::6443->6443/tcp
+```
+
+
+Now you can use *kubectl* as in any other kubernetes cluster
+```
+ $ kubectl cluster-info
+Kubernetes control plane is running at https://127.0.0.1:6443
+CoreDNS is running at https://127.0.0.1:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+Metrics-server is running at https://127.0.0.1:6443/api/v1/namespaces/kube-system/services/https:metrics-server:/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
 
 ## if you want persistent storage in your nodes
@@ -60,13 +73,19 @@ deployment.apps/echo created
 service/echo-service created
 ingress.networking.k8s.io/echo-ingress created
 ```
-Then you can open http://localhost:8081/echo
+Then you can open http://localhost/echo
 
 
 ### If you want to start it all over again then:
 ```
 ./remove-cluster.sh
 ```
+
+### install kubernetes dashboard
+```
+./dashboard-install.sh
+```
+
 
 have fun!
 
